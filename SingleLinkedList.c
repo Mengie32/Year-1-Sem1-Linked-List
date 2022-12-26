@@ -1,5 +1,6 @@
 #include "SingleLinkedList.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 // returns a pointer to the node at the specified index
 node* nodeAtIndex(node* listHead, int index) {
@@ -7,6 +8,12 @@ node* nodeAtIndex(node* listHead, int index) {
 	node* output = listHead;
 	for (i = 0; i < index; i++) {
 		output = output->next;
+
+		// return error if specified index does not exist
+		if (!output) {
+			printf("\nError in nodeAtIndex: Index does not exist\n");
+			exit(1);
+		}
 	}
 	return output;
 }
@@ -51,6 +58,6 @@ void deleteNode(node* listHead, int index) {
 
 	// free data memory
 	free(toDelete->data);
-	// free pointers
+	// free node
 	free(toDelete);
 }

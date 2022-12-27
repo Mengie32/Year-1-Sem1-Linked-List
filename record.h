@@ -14,4 +14,7 @@ record* createRecord(char name[20], char surname[20], char telephone[9]);
 // If both records are identical, returns NULL
 record* cmpNameSurname(record* record1, record* record2);
 
+// prints the given record
+void printRecord(record* record);
+
 #endif // !RECORD_H

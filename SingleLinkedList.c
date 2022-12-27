@@ -18,10 +18,22 @@ node* nodeAtIndex(node* listHead, int index) {
 	return output;
 }
 
+node* finalNode(node* listHead) {
+	node* cursor = listHead;
+	// special case if no node exists, or only 1 node exists
+	if (listHead->next == NULL || listHead == NULL) { // this may not be necessary
+		return listHead;
+	}
+	// loop until no next node exists
+	while (cursor->next) {
+		cursor = cursor->next;
+	}
+	return cursor;
+}
+
 // Inserts a node into the list at the specified position (zero-indexed).
 // Returns pointer to new node
 node* newIndexedNode(node **listHead, void* data, int index) {
-	int i;
 	node *newNode = (node*)malloc(sizeof(node)); // allocate memory for node (pointers only)
 	node *prev = *listHead, *next;
 
@@ -46,6 +58,24 @@ node* newIndexedNode(node **listHead, void* data, int index) {
 	return newNode;
 }
 
+
+// appends a new node to the end of the given list.
+// Returns pointer to new node
+node* appendNode(node** listHead, void* data) {
+	node* newNode = (node*)malloc(sizeof(node));
+	newNode->data = data;
+	newNode->next = NULL;
+
+	//special case if no nodes exist
+	if (!(*listHead)) {
+		*listHead = newNode;
+	}
+	else {
+		finalNode(*listHead)->next = newNode;
+	}
+	return newNode;
+}
+
 // Delete node at the specified index (zero-indexed).
 // Also deletes the data directly attached to the node!
 // (if the data contains pointers, the data attached to these pointers will not be freed)
@@ -60,4 +90,15 @@ void deleteNode(node* listHead, int index) {
 	free(toDelete->data);
 	// free node
 	free(toDelete);
+}
+
+// prints the data of each node according to the given function
+void printList(node* listHead, void (*printFunc)(void*)) {
+	node* cursor = listHead;
+	void* data = cursor->data;
+	while (cursor) {
+		data = cursor->data;
+		printFunc(data);
+		cursor = cursor->next;
+	}
 }

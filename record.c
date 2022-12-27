@@ -52,3 +52,8 @@ record* cmpNameSurname(record* record1, record* record2) {
 		return NULL;
 	}
 }
+
+// prints the given record
+void printRecord(record* record) {
+	printf("\nName: %s\nSurname: %s\nTelephone: %s\n",record->name, record->surname, record->telephone);
+}

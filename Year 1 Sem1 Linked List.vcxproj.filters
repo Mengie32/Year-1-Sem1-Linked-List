@@ -24,12 +24,18 @@
     <ClCompile Include="record.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TESTING.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingleLinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="record.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TESTING.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

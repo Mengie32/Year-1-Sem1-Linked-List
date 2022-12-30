@@ -15,12 +15,21 @@ record* createRecord(char name[20], char surname[20], char telephone[9]) {
 	return newRecord;
 }
 
-// Returns a pointer to the record which would come second in alphabetical order according to name, then surname
+// Returns 1 if record1 comes before record2 alphabetically, else returns 0
 // If both records are identical, returns NULL
-record* cmpNameSurname(record* record1, record* record2) {
+int cmpNameSurname(void* data1, void* data2) {
+	record* record1 = (record*)data1;
+	record* record2 = (record*)data2;
+
+	//special case if data is not given
+	if (!(data1 && data2)) {
+		return 1;
+	}
+
 	int i, len;
-	char name1[20], surname1[20];
-	char name2[20], surname2[20];
+	char name1[40], surname1[20];
+	char name2[40], surname2[20];
+
 	strcpy_s(name1, 20, record1->name);
 	strcpy_s(surname1, 20, record1->surname);
 
@@ -28,26 +37,24 @@ record* cmpNameSurname(record* record1, record* record2) {
 	strcpy_s(surname2, 20, record2->surname);
 
 	// concatenate name and surname to make alphabetical sort easier
-	char str1[40];
-	char str2[40];
-	strcpy_s(str1, 40,  strcat_s(name1, 20, surname1));
-	strcpy_s(str2, 40, strcat_s(name2, 20, surname2));
+	strcat_s(name1, 20, surname1);
+	strcat_s(name2, 20, surname2);
 
 	// set strings to lowercase to ignore case
-	strcpy_s(str1, 40, _strlwr_s(str1,40));
-	strcpy_s(str2, 40, _strlwr_s(str2,40));
+	_strlwr_s(name1, strlen(name1) + 1);
+	_strlwr_s(name2, strlen(name2) + 1);
 
-	len = min(strlen(str1), strlen(str2));
-	// compare strings one letter at a time
+	len = min(strlen(name1), strlen(name2));
+	// compare strings one letter at a time until a different pair of letters is found
 	for (i = 0; i < len; i++) {
-		if (str1[i] == str2[i]) {
+		if (name1[i] == name2[i]) {
 			continue;
 		}
-		else if (str1[i] > str2[i]) {
-			return record1;
+		else if (name1[i] > name2[i]) {
+			return 0;
 		}
-		else if (str1[i] < str2[i]) {
-			return record2;
+		else if (name1[i] < name2[i]) {
+			return 1;
 		}
 		return NULL;
 	}

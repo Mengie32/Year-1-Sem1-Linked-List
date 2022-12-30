@@ -58,6 +58,41 @@ node* newIndexedNode(node **listHead, void* data, int index) {
 	return newNode;
 }
 
+// places the new node in the first position that satisfies cmpFunc
+// cmpFunc must return 1 when position is valid
+node* newSortedNode(node** listHead, void* data, int (*cmpFunc)(void*,void*)) {
+	node* newNode = (node*)malloc(sizeof(node)); // allocate memory for node (pointers only)
+	newNode->data = data;
+	newNode->next = NULL;
+	node* cursor = (*listHead);
+	node* prevCursor = NULL;
+
+	// special case if new node is to be the first node or no node exist in the list
+	if (*listHead == NULL || cmpFunc(data, (*listHead)->data)) {
+		newNode->next = *listHead;
+		*listHead = newNode;
+		return newNode;
+	}
+
+	// loop through list until cmpFunc is satisfied
+	while (cmpFunc(cursor->data,data)) {
+		if (cursor->next != NULL) {
+			prevCursor = cursor;
+			cursor = cursor->next;
+		}
+		else { // special case if new node is to be the last node
+			newNode->next = NULL;
+			cursor->next = newNode;
+			return newNode;
+		}
+	}
+	
+	// after a position for the new node is found, new node is placed immediatley after cursor
+	newNode->next = cursor;
+	prevCursor->next = newNode;
+	return newNode;
+}
+
 
 // appends a new node to the end of the given list.
 // Returns pointer to new node

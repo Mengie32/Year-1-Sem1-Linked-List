@@ -30,5 +30,9 @@ void deleteNode(node* listHead, int index);
 // prints the data of each node according to the given function
 void printList(node* listHead, void (*printFunc)(void*));
 
+// places the new node in the first position that satisfies cmpFunc
+// cmpFunc must return 1 when position is valid
+node* newSortedNode(node** listHead, void* data, int (*cmpFunc)(void*, void*));
+
 #endif // !SINGLELINKEDLIST_H
 

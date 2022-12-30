@@ -8,8 +8,8 @@
 
 int main() {
 	node* myList = NULL;
-	appendNode(&myList, createRecord("Gianluca1", "Galea1", "79382880"));
-	appendNode(&myList, createRecord("Gianluca2", "Galea2", "79382881"));
-	appendNode(&myList, createRecord("Gianluca3", "Galea3", "79382882"));
+	createRandom(&myList, 5, 30);
+
+
 	printList(myList, *printRecord);
-}
+ }

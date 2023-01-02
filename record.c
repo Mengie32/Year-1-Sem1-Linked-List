@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "record.h"
 
 // Allocates memory for a new record, fills in its data, and returns a pointer to it.
@@ -15,9 +16,80 @@ record* createRecord(char name[20], char surname[20], char telephone[9]) {
 	return newRecord;
 }
 
-// Returns 1 if record1 comes before record2 alphabetically, else returns 0
+// returns 1 if string contains only uper or lowercase letters, else returns 0
+int isOnlyLetters(char* string) {
+	char* cursor = string;
+	while (*cursor != 0) { // loop through string until null character
+		//printf("\n%i", *cursor);
+		if (!((*cursor >= 65 && *cursor <= 90) || (*cursor >= 97 && *cursor <= 122))) {
+			return 0;
+		}
+		cursor++;
+	}
+	return 1;
+}
+
+// returns 1 if string contains only numbers, else returns 0
+int isTelephoneNumber(char* string) {
+	char* cursor = string;
+	while (*cursor != 0) { // loop through string until null character
+		//printf("\n%i", *cursor);
+		if (!(*cursor >= 48 && *cursor <= 57)) {
+			return 0;
+		}
+		cursor++;
+	}
+	if (strlen(string) != 8) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
+}
+
+// Asks the user to input name, surname, and telephone number, then creates a record with that data.
+// Returns NULL if name or surname contains chars other than letters, or if telephone contains chars other than numbers.
+record* createRecordForm() {
+	char name[20], surname[20], telephone[9];
+	// get user input
+	printf("\nPlease input name, surname, and telephone number\nName: ");
+	gets(name);
+
+	printf("Surame: ");
+	gets(surname);
+
+	printf("Telephone Number: ");
+	gets(telephone);
+
+	// data validation (checking for duplicates done externally)
+	if (!isOnlyLetters(name)) {
+		printf("\nName must consist of only upper or lowercase letter\n");
+		return NULL;
+	}
+	else if(!isOnlyLetters(surname)) {
+		printf("\nSurame must consist of only upper or lowercase letter\n");
+		return NULL;
+	}
+	else if (!isTelephoneNumber(telephone)) {
+		printf("\nTelephone Number must consist of only numbers and be exactly 8 digits long\n");
+		return NULL;
+	} else {
+		return createRecord(name, surname, telephone);
+	};
+}
+
+// Returns 1 if the two records have identical telphone numbers, else returns 0
+int isDuplicate(void* data1, void* data2) {
+	record *record1 = (record*)data1, *record2 = (record*)data2;
+	if (record1 == NULL || record2 == NULL) {
+		return 0;
+	}
+	return (strcmp(record1->telephone, record2->telephone) == 0) ? 1 : 0;
+}
+
+// Returns 1 if record 1 comes before record 2 alphabetically, else returns 0
 // If both records are identical, returns NULL
-int cmpNameSurname(void* data1, void* data2) {
+int sortNameSurname(void* data1, void* data2) {
 	record* record1 = (record*)data1;
 	record* record2 = (record*)data2;
 

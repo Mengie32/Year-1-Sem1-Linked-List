@@ -19,7 +19,7 @@ int operator(int (*func)(int),int input) {
 }
 
 //creates random records
-void createRandom(record **listHead,int length,int count) {
+void createRandom(node **listHead,int length,int count) {
 	srand(time(0));
 	int i,j;
 	char name[20], surname[20], telephone[9];
@@ -27,7 +27,7 @@ void createRandom(record **listHead,int length,int count) {
 		exit(10);
 	}
 	for (j = 0; j < count; j++) {
-		for (i = 0; i <= length; i++) {
+		for (i = 0; i <= length-1; i++) {
 			name[i] = rand() % 26 + 97;
 			surname[i] = rand() % 26 + 97;
 		}
@@ -38,6 +38,6 @@ void createRandom(record **listHead,int length,int count) {
 		}
 		telephone[i] = '\0';
 
-		newSortedNode(listHead, createRecord(name, surname, telephone), cmpNameSurname);
+		newSortedNode(listHead, createRecord(name, surname, telephone), sortNameSurname);
 	}
 }

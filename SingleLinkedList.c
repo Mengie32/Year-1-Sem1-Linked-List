@@ -31,8 +31,42 @@ node* finalNode(node* listHead) {
 	return cursor;
 }
 
+// Returns the first node that satisfies the given compare function.
+// 
+// If returnPrev is true, the node immediatley before the satisfying node is returned instead.
+// In this case, if the first node satisfies the condition, then the last node in the list will be returned.
+// If no node satisfies the compare function, returns NULL.
+node* nodeByCmp(node* listHead, int (*cmpFunc)(void*, void*), void* condition, int returnPrev) {
+	node *cursor = listHead, *prev = NULL;
+	int foundFlag = 0;
+
+	do {
+		if (cmpFunc(cursor->data, condition)) {
+			foundFlag = 1;
+			break;
+		}
+		else {
+			prev = cursor;
+			cursor = cursor->next;
+		}
+	} while (cursor != NULL);
+
+	if (returnPrev && foundFlag && cursor->next == NULL) {
+		return finalNode(listHead);
+	}
+	else if (returnPrev && foundFlag) {
+		return prev;
+	}
+	else if (foundFlag) {
+		return cursor;
+	}
+	else {
+		return NULL;
+	}
+}
+
 // Inserts a node into the list at the specified position (zero-indexed).
-// Returns pointer to new node
+// Returns a pointer to new node
 node* newIndexedNode(node **listHead, void* data, int index) {
 	node *newNode = (node*)malloc(sizeof(node)); // allocate memory for node (pointers only)
 	node *prev = *listHead, *next;
@@ -44,7 +78,7 @@ node* newIndexedNode(node **listHead, void* data, int index) {
 	}
 	else { // should this be an <if...else>, or an <if{return}> ?
 
-		prev = nodeAtIndex(listHead, index - 1); // record what will be the previous node in the list for later
+		prev = nodeAtIndex((*listHead), index - 1); // record what will be the previous node in the list for later
 		next = prev->next; // record what will be the next node in the list for later
 
 		//set pointers of previous and new node
@@ -60,7 +94,7 @@ node* newIndexedNode(node **listHead, void* data, int index) {
 
 // places the new node in the first position that satisfies cmpFunc
 // cmpFunc must return 1 when position is valid
-node* newSortedNode(node** listHead, void* data, int (*cmpFunc)(void*,void*)) {
+node* newSortedNode(node** listHead, void* data, int (*cmpFunc)(void*, void*)) {
 	node* newNode = (node*)malloc(sizeof(node)); // allocate memory for node (pointers only)
 	newNode->data = data;
 	newNode->next = NULL;
@@ -89,13 +123,16 @@ node* newSortedNode(node** listHead, void* data, int (*cmpFunc)(void*,void*)) {
 	
 	// after a position for the new node is found, new node is placed immediatley after cursor
 	newNode->next = cursor;
-	prevCursor->next = newNode;
+	if (prevCursor->next) {
+		prevCursor->next = newNode;
+	}
 	return newNode;
 }
 
 
 // appends a new node to the end of the given list.
 // Returns pointer to new node
+/*
 node* appendNode(node** listHead, void* data) {
 	node* newNode = (node*)malloc(sizeof(node));
 	newNode->data = data;
@@ -110,30 +147,50 @@ node* appendNode(node** listHead, void* data) {
 	}
 	return newNode;
 }
+*/
 
-// Delete node at the specified index (zero-indexed).
+// Deletes the first node in the list whos data satisfies the given compare function
 // Also deletes the data directly attached to the node!
 // (if the data contains pointers, the data attached to these pointers will not be freed)
-void deleteNode(node* listHead, int index) {
-	node* prev = nodeAtIndex(listHead, index - 1);
-	node* toDelete = prev->next;
+void deleteByCmp(node** listHead, int (*cmpFunc)(void*, void*),void* condition) {
+	node *prev = nodeByCmp(*listHead, cmpFunc, condition, 1), *toDelete, *next;
+	int foundFlag = 1;
+	
+	if (prev == NULL) { // do nothing if no node satisfies the cmpFunc
+		foundFlag = 0;
+		toDelete = NULL;
+		next = NULL;
+	}
+	else if (prev == finalNode(*listHead)) { // special case if first node is to be deleted
+		toDelete = *listHead;
+		next = toDelete->next; // will be null if listHead is the only node
+		*listHead = next;
+		prev = NULL;
+	}
+	else {
+		toDelete = prev->next;
+		next = toDelete->next;
+	}
 
-	// reassign previous node's pointer to next node
-	prev->next = toDelete->next;
-
-	// free data memory
-	free(toDelete->data);
-	// free node
-	free(toDelete);
+	if (foundFlag) {
+		if (prev) {
+			prev->next = next;
+		}
+		free(toDelete->data);
+		free(toDelete);
+	}
 }
 
 // prints the data of each node according to the given function
 void printList(node* listHead, void (*printFunc)(void*)) {
 	node* cursor = listHead;
 	void* data = cursor->data;
+	int i = 1;
 	while (cursor) {
+		printf("\nRecord %i:",i);
 		data = cursor->data;
 		printFunc(data);
 		cursor = cursor->next;
+		i++;
 	}
 }

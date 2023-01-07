@@ -20,8 +20,9 @@ node* nodeAtIndex(node* listHead, int index) {
 
 node* finalNode(node* listHead) {
 	node* cursor = listHead;
+
 	// special case if no node exists, or only 1 node exists
-	if (listHead->next == NULL || listHead == NULL) { // this may not be necessary
+	if (listHead == NULL || listHead->next == NULL) { // this may not be necessary
 		return listHead;
 	}
 	// loop until no next node exists
@@ -36,12 +37,17 @@ node* finalNode(node* listHead) {
 // If returnPrev is true, the node immediatley before the satisfying node is returned instead.
 // In this case, if the first node satisfies the condition, then the last node in the list will be returned.
 // If no node satisfies the compare function, returns NULL.
-node* nodeByCmp(node* listHead, int (*cmpFunc)(void*, void*), void* condition, int returnPrev) {
-	node *cursor = listHead, *prev = NULL;
+node* nodeByCmp(node* listHead, int (*cmpFunc)(void*, void*), void* compareTo, int returnPrev) {
+	node *final = finalNode(listHead);
+	node *cursor = listHead, *prev = final;
 	int foundFlag = 0;
 
+	if (cursor == NULL) { // sepcial case if the list is empty
+		return NULL;
+	}
+
 	do {
-		if (cmpFunc(cursor->data, condition)) {
+		if (cmpFunc(cursor->data, compareTo)) {
 			foundFlag = 1;
 			break;
 		}
@@ -51,8 +57,8 @@ node* nodeByCmp(node* listHead, int (*cmpFunc)(void*, void*), void* condition, i
 		}
 	} while (cursor != NULL);
 
-	if (returnPrev && foundFlag && cursor->next == NULL) {
-		return finalNode(listHead);
+	if (returnPrev && foundFlag && prev == final) { // if return prev is true, and the 1st node satisfied the compare function
+		return final;
 	}
 	else if (returnPrev && foundFlag) {
 		return prev;
@@ -152,8 +158,8 @@ node* appendNode(node** listHead, void* data) {
 // Deletes the first node in the list whos data satisfies the given compare function
 // Also deletes the data directly attached to the node!
 // (if the data contains pointers, the data attached to these pointers will not be freed)
-void deleteByCmp(node** listHead, int (*cmpFunc)(void*, void*),void* condition) {
-	node *prev = nodeByCmp(*listHead, cmpFunc, condition, 1), *toDelete, *next;
+void deleteByCmp(node** listHead, int (*cmpFunc)(void*, void*),void* compareTo) {
+	node *prev = nodeByCmp(*listHead, cmpFunc, compareTo, 1), *toDelete, *next;
 	int foundFlag = 1;
 	
 	if (prev == NULL) { // do nothing if no node satisfies the cmpFunc

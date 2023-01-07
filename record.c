@@ -29,7 +29,7 @@ int isOnlyLetters(char* string) {
 	return 1;
 }
 
-// returns 1 if string contains only numbers, else returns 0
+// returns 1 if string contains only numbers AND is 8 characters long, else returns 0
 int isTelephoneNumber(char* string) {
 	char* cursor = string;
 	while (*cursor != 0) { // loop through string until null character
@@ -48,7 +48,7 @@ int isTelephoneNumber(char* string) {
 }
 
 // Asks the user to input name, surname, and telephone number, then creates a record with that data.
-// Returns NULL if name or surname contains chars other than letters, or if telephone contains chars other than numbers.
+// Returns NULL if name or surname contains chars other than letters, or if telephone contains chars other than numbers or is not 8 chars long.
 record* createRecordForm() {
 	char name[20], surname[20], telephone[9];
 	// get user input
@@ -78,8 +78,21 @@ record* createRecordForm() {
 	};
 }
 
+// Asks the user to input a telephone number, and creates a record with that number, to be used by a compare function.
+// Returns NULL if the telephone number is invalid.
+record* deleteRecordForm() {
+	char telephone[9];
+	record* record = NULL;
+	printf("\nEnter Telephone number of record to be deleted:\nTelephone: ");
+	gets(telephone);
+	if (isTelephoneNumber(telephone)) {
+		record = createRecord("","",telephone);
+	}
+	return record;
+}
+
 // Returns 1 if the two records have identical telphone numbers, else returns 0
-int isDuplicate(void* data1, void* data2) {
+int isDuplicateTelephone(void* data1, void* data2) {
 	record *record1 = (record*)data1, *record2 = (record*)data2;
 	if (record1 == NULL || record2 == NULL) {
 		return 0;

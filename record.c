@@ -2,8 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include "record.h"
+#include "menuUtils.h"
 
 // Allocates memory for a new record, fills in its data, and returns a pointer to it.
+// Remember to free the record after it has been used.
 record* createRecord(char name[20], char surname[20], char telephone[9]) {
 
 	record* newRecord = (record*)malloc(sizeof(record)); // allocatae memory
@@ -91,6 +93,61 @@ record* deleteRecordForm() {
 	return record;
 }
 
+// lets the user select between name, surname, telephone, or both name and surname, then requests the appropriate information from the user
+// returns a record containing the specified information
+record* searchRecordForm() {
+	char name[20] = "", surname[20] = "", telephone[9] = "";
+	int nameFlag = 0, surnameFlag = 0, telephoneFlag = 0;
+
+	printf("\nSearch by:\n\n1. Name\n2. Surname\n3. Name & Surname\n4. Telephone Number\n\n");
+	switch (userOption(1,4))
+	{
+	case 1:
+		nameFlag = 1;
+		break;
+	case 2:
+		surnameFlag = 1;
+		break;
+	case 3:
+		nameFlag = 1;
+		surnameFlag = 1;
+		break;
+	case 4:
+		telephoneFlag = 1;
+		break;
+	default:
+		break;
+	}
+
+	// request appropriate information:
+	printf("\nEnter inormation:\n");
+	if (nameFlag) {
+		do {
+			printf("Name: ");
+			scanf_s("%19s", name, 20);
+			clearstdin();
+		} while (!isOnlyLetters(name));
+	}
+	if (surnameFlag) {
+		do {
+			printf("Surame: ");
+			scanf_s("%19s", surname, 20);
+			clearstdin();
+		} while (!isOnlyLetters(surname));
+	}
+	if (telephoneFlag) {
+		do {
+			printf("Telephone: ");
+			scanf_s("%8s", telephone, 9);
+			clearstdin();
+		} while (!isTelephoneNumber(telephone));
+	}
+
+	return createRecord(name, surname, telephone);
+
+	//printf("\nName: %s\nSurname: %s\nTelephone: %s",name,surname,telephone);
+}
+
 // Returns 1 if the two records have identical telphone numbers, else returns 0
 int isDuplicateTelephone(void* data1, void* data2) {
 	record *record1 = (record*)data1, *record2 = (record*)data2;
@@ -98,6 +155,39 @@ int isDuplicateTelephone(void* data1, void* data2) {
 		return 0;
 	}
 	return (strcmp(record1->telephone, record2->telephone) == 0) ? 1 : 0;
+}
+
+// Returns 1 if the two records have identical names, surnames, and telephone numbers but ignores blank fields, else returns 0
+int cmpRecords(void* data1, void* data2) {
+	record* record1 = (record*)data1, * record2 = (record*)data2;
+	int matchFlag = 1;
+
+	if (record1 == NULL || record2 == NULL) {
+		return 0;
+	}
+	
+	if (_strcmpi(record1->name, record2->name) != 0 && record1->name[0] != 0 && record2->name[0] != 0) {
+		matchFlag = 0;
+	}
+
+	if (_strcmpi(record1->surname, record2->surname) != 0 && record1->surname[0] != 0 != 0 && record2->surname[0] != 0) {
+		matchFlag = 0;
+	}
+
+	if (strcmp(record1->telephone, record2->telephone) != 0 && record1->telephone[0] != 0 && record2->telephone[0] != 0) {
+		matchFlag = 0;
+	}
+
+	return matchFlag;
+}
+
+// Returns 1 if the two records have identical surnames, else returns 0
+int cmpSurname(void* data1, void* data2) {
+	record* record1 = (record*)data1, * record2 = (record*)data2;
+	if (record1 == NULL || record2 == NULL) {
+		return 0;
+	}
+	return (strcmp(record1->surname, record2->surname) == 0) ? 1 : 0;
 }
 
 // Returns 1 if record 1 comes before record 2 alphabetically, else returns 0

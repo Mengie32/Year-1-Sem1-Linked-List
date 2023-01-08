@@ -20,12 +20,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="menuUtils.c" />
     <ClCompile Include="record.c" />
     <ClCompile Include="SingleLinkedList.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="TESTING.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="menuUtils.h" />
     <ClInclude Include="record.h" />
     <ClInclude Include="SingleLinkedList.h" />
     <ClInclude Include="TESTING.h" />
